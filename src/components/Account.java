@@ -33,20 +33,21 @@ public class Account {
 		return balance;
 	}
 
-	public void setBalance(Flow flow, double amount) {
-		switch (flow) {
-			case CREDIT:
-			    balance += amount;
-			    break;
+	public void setBalance(Flow flow) {
+		switch (flow.getFlowType()) {
 			case DEBIT:
-			    balance -= amount;
-			    break;
+				this.balance -= flow.getAmount();
+				break;
+				
+			case CREDIT:
+				this.balance += flow.getAmount();
+				break;
+				
 			case TRANSFER:
-			    balance -= amount;
-			    
-			    break;
+				this.balance += flow.getAmount();
+				break;
 		}
-    }
+	}
 
 	public Client getClient() {
 		return client;
@@ -58,7 +59,7 @@ public class Account {
 
 	@Override
 	public String toString() {
-		return "label = " + label + "\nn_account = " + n_account + "\nbalance = " + balance + "\nclient :\n" + client
+		return "label = " + label + "\naccount number = " + n_account + "\nbalance = " + balance + "\nclient :\n" + client
 				+ "\n";
 	}
 }
