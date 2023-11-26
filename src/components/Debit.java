@@ -4,10 +4,14 @@ package components;
 import java.time.LocalDate;
 
 public class Debit extends Flow {
+	
+    public Debit() {
+    }
+	
     public Debit(String comment, double amount, int targetAccountNumber, boolean effect, LocalDate date) {
         super(comment, amount, targetAccountNumber, effect, date);
     }
-    
+
     @Override
     public FlowType getFlowType() {
         return FlowType.DEBIT;

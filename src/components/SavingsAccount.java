@@ -3,6 +3,9 @@ package components;
 
 public class SavingsAccount extends Account {
 
+    public SavingsAccount() {
+    }
+	
     public SavingsAccount(String label, Client client) {
         super(label, client);
     }

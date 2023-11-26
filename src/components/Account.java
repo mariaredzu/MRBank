@@ -1,15 +1,24 @@
 //1.2.1 Creation of the account class
 package components;
 
+
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
+
 public class Account {
 
 	private static int count_acc = 1;
 	
 	private String label;
+	@XmlElement(name = "n_account")
 	private int n_account;
 	private double balance;
 	private Client client;
 	
+    public Account() {
+    }
+
 	public Account(String label, Client client) {
 
         this.n_account = count_acc++;
@@ -38,11 +47,11 @@ public class Account {
 			case DEBIT:
 				this.balance -= flow.getAmount();
 				break;
-				
+
 			case CREDIT:
 				this.balance += flow.getAmount();
 				break;
-				
+
 			case TRANSFER:
 				this.balance += flow.getAmount();
 				break;

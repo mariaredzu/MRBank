@@ -2,6 +2,8 @@
 //1.2.3 Creation of the tablea account
 package test_main;
 
+import components.*;
+
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Hashtable;
@@ -9,15 +11,20 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 
-import components.Account;
-import components.Client;
-import components.Credit;
-import components.CurrentAccount;
-import components.Debit;
-import components.Flow;
-import components.FlowType;
-import components.SavingsAccount;
-import components.Transfer;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+
 
 public class test_main {
 	
@@ -47,6 +54,27 @@ public class test_main {
             }
         }
     }
+  
+    //Part 2
+    //2.2 XML file of account
+    private static Account[] loadAccountsFromXmlFile(String filePath) {
+        try {
+            Path path = Paths.get(filePath);
+
+            if (Files.exists(path)) {
+                JAXBContext context = JAXBContext.newInstance(Accounts.class);
+                Unmarshaller unmarshaller = context.createUnmarshaller();
+                Accounts accountsWrapper = (Accounts) unmarshaller.unmarshal(path.toFile());
+                return accountsWrapper.getAccounts();
+            } else {
+                System.out.println("The XML file does not exist.");
+                return new Account[0];
+            }
+        } catch (JAXBException e) {
+            e.printStackTrace();
+            return new Account[0];
+        }
+    }
     
     //Part 1.3
     //1.3.1 Adaptation of the table of accounts
@@ -54,6 +82,33 @@ public class test_main {
         Hashtable<Integer, Account> accountHashtable = new Hashtable<>();
         Arrays.stream(accounts).forEach(account -> accountHashtable.put(account.getN_account(), account));
         return accountHashtable;
+    }
+    
+    // Part 2
+    //2.1 JSON file of flows
+    private static Flow[] JsonFlows(String filePath) {
+        try {
+            Path path = Paths.get(filePath);
+
+            if (Files.exists(path)) {
+
+                ObjectMapper objectMapper = new ObjectMapper();
+                objectMapper.registerModule(new JavaTimeModule());
+                objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+
+                byte[] bytes = Files.readAllBytes(Paths.get(filePath));
+                String jsonContent = new String(bytes);
+
+                Flows flowContainer = objectMapper.readValue(jsonContent, Flows.class);
+                return flowContainer.getFlow().toArray(new Flow[0]);
+            } else {
+                System.out.println("The JSON file does not exist.");
+                return new Flow[0];
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new Flow[0];
+        }
     }
 
     //1.3.4 Creation of the flow array
@@ -71,38 +126,38 @@ public class test_main {
 
     //1.3.5 Updating accounts
     private static void updateBalances(Hashtable<Integer, Account> accountHashtable, Flow[] flows) {
-        Arrays.stream(flows).forEach(flow -> {
-            Account account = accountHashtable.get(flow.getTargetAccountNumber());
+    	
+        //Arrays.stream(flows).forEach(flow -> {
+    	for (int i = 0; i < flows.length; i++) {
+            Account account = accountHashtable.get(flows[i].getTargetAccountNumber());
             
             if (account != null) {
-                account.setBalance(flow);
-
-                if (flow instanceof Transfer) {
-                    Transfer transfer = (Transfer) flow;
+                account.setBalance(flows[i]);
+                if (flows[i] instanceof Transfer) {
+                    Transfer transfer = (Transfer) flows[i];
                     Account issuingAccount = accountHashtable.get(transfer.getIssuingAccountNumber());
-
                     if (issuingAccount != null) {
-                        issuingAccount.setBalance(new Debit(flow.getComment(), flow.getAmount(), transfer.getIssuingAccountNumber(), false, flow.getDate()));
+                        issuingAccount.setBalance(new Debit(flows[i].getComment(), flows[i].getAmount(), transfer.getIssuingAccountNumber(), false, flows[i].getDate()));
                     }
                 }
-            } else if  (flow.getTargetAccountNumber() == 0) {
+            } else if  (flows[i].getTargetAccountNumber() == 0) {
         		for (Entry<Integer, Account> acc_Has : accountHashtable.entrySet()) {
         			account = acc_Has.getValue();
         			if (account.getLabel().equals("Current")) {
-            			flow.setTargetAccountNumber(account.getN_account());
-                		account.setBalance(flow);
+        				flows[i].setTargetAccountNumber(account.getN_account());
+                		account.setBalance(flows[i]);
         			}
         		}
             } else {
         		for (Entry<Integer, Account> acc_Has : accountHashtable.entrySet()) {
         			account = acc_Has.getValue();
         			if (account.getLabel().equals("Savings")) {
-            			flow.setTargetAccountNumber(account.getN_account());
-                		account.setBalance(flow);
+        				flows[i].setTargetAccountNumber(account.getN_account());
+                		account.setBalance(flows[i]);
         			}
         		}
             }
-        });
+        }
 
         Optional<Account> negativeBalanceAccount = accountHashtable.values().stream()
                 .filter(account -> account.getBalance() < 0)
@@ -111,15 +166,15 @@ public class test_main {
         negativeBalanceAccount.ifPresent(account ->
                 System.out.println("Warning: Account " + account.getN_account() + " has a negative balance."));
     }
-
-    private static FlowType getFlowType(Flow flow) {
-        return flow.isEffect() ? FlowType.CREDIT : FlowType.DEBIT;
-    }
     
     private static void showAccounts(Account[] accounts) {
-        System.out.println("Accounts:\n");
-        Arrays.stream(accounts).forEach(account -> System.out.println(account.toString()));
-    }
+    	 System.out.println("Accounts:\n");
+    	    if (accounts != null) {
+    	        Arrays.stream(accounts).forEach(account -> System.out.println(account.toString()));
+    	    } else {
+    	        System.out.println("The array of accounts is null.");
+    	    }
+    	}
     
     private static void displayAccountHashtable(Hashtable<Integer, Account> accountHashtable) {
         Map<Integer, Account> updatedMap = new Hashtable<>(accountHashtable);
@@ -143,10 +198,15 @@ public class test_main {
         insAccounts(accounts, clients);
         showAccounts(accounts);
         
+        //Part 2
+        Account[] accounts2 = loadAccountsFromXmlFile("src/resources/accounts.xml");
         //Part 1.3
-        Hashtable<Integer, Account> accountHashtable = createAccountHashtable(accounts);
-        Flow[] flows = createFlows(accounts);
-        updateBalances(accountHashtable, flows);
+        Hashtable<Integer, Account> accountHashtable = createAccountHashtable(accounts2);
+        //Flow[] flows = createFlows(accounts);
+        //Part 2
+        Flow[] flows2 = JsonFlows("src/resources/flows.json");
+        //Part 1.3
+        updateBalances(accountHashtable, flows2);
         displayAccountHashtable(accountHashtable);
 	}
 }

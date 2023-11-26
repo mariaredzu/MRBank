@@ -1,0 +1,41 @@
+{
+  "flow": [
+    {
+      "comment": "Debit of 50€ from account 1",
+      "identifier" : "1",
+      "amount": 50.0,
+      "targetAccountNumber": 2,
+      "effect": true,
+      "date": "2023-11-23",
+      "type": "DEBIT"
+    },
+    {
+      "comment": "Credit of 100.50€ on all current accounts",
+      "identifier" : "2",
+      "amount": 100.50,
+      "targetAccountNumber": 0,
+      "effect": true,
+      "date": "2023-11-23",
+      "type": "CREDIT"
+    },
+    {
+      "comment": "Credit of 1500€ on all savings accounts",
+      "identifier" : "3",
+      "amount": 1500.0,
+      "targetAccountNumber": -1,
+      "effect": true,
+      "date": "2023-11-23",
+      "type": "CREDIT"
+    },
+    {
+          "comment": "Transfer of 50€ from account 1 to account 2",
+      "identifier" : "4",
+      "amount": 50.0,
+      "targetAccountNumber": 2,
+      "issuingAccountNumber": 1,
+      "effect": true,
+      "date": "2023-11-23",
+      "type": "TRANSFER"
+    }
+  ]
+}

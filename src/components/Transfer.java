@@ -4,7 +4,11 @@ package components;
 import java.time.LocalDate;
 
 public class Transfer extends Flow {
+	
     private int issuingAccountNumber;
+    
+    public Transfer() {
+    }
 
     public Transfer(String comment, double amount, int targetAccountNumber, int issuingAccountNumber, boolean effect, LocalDate date) {
         super(comment, amount, targetAccountNumber, effect, date);
@@ -18,7 +22,7 @@ public class Transfer extends Flow {
     public void setIssuingAccountNumber(int issuingAccountNumber) {
         this.issuingAccountNumber = issuingAccountNumber;
     }
-    
+
     @Override
     public FlowType getFlowType() {
         return FlowType.TRANSFER;
