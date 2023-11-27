@@ -127,7 +127,6 @@ public class test_main {
     //1.3.5 Updating accounts
     private static void updateBalances(Hashtable<Integer, Account> accountHashtable, Flow[] flows) {
     	
-        //Arrays.stream(flows).forEach(flow -> {
     	for (int i = 0; i < flows.length; i++) {
             Account account = accountHashtable.get(flows[i].getTargetAccountNumber());
             
@@ -198,15 +197,19 @@ public class test_main {
         insAccounts(accounts, clients);
         showAccounts(accounts);
         
-        //Part 2
-        Account[] accounts2 = loadAccountsFromXmlFile("src/resources/accounts.xml");
         //Part 1.3
-        Hashtable<Integer, Account> accountHashtable = createAccountHashtable(accounts2);
-        //Flow[] flows = createFlows(accounts);
-        //Part 2
-        Flow[] flows2 = JsonFlows("src/resources/flows.json");
-        //Part 1.3
-        updateBalances(accountHashtable, flows2);
+        System.out.println("(Answer exercise 1.3)");
+        Hashtable<Integer, Account> accountHashtable = createAccountHashtable(accounts);
+        Flow[] flows = createFlows(accounts);
+        updateBalances(accountHashtable, flows);
         displayAccountHashtable(accountHashtable);
+        
+        //Part 2
+        System.out.println("(Answer exercise 2)");
+        Account[] accounts2 = loadAccountsFromXmlFile("src/resources/accounts.xml");
+        Hashtable<Integer, Account> accountHashtable2 = createAccountHashtable(accounts2);
+        Flow[] flows2 = JsonFlows("src/resources/flows.json");
+        updateBalances(accountHashtable2, flows2);
+        displayAccountHashtable(accountHashtable2);
 	}
 }

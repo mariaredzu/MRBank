@@ -4,7 +4,7 @@
       "comment": "Debit of 50€ from account 1",
       "identifier" : "1",
       "amount": 50.0,
-      "targetAccountNumber": 2,
+      "targetAccountNumber": 1,
       "effect": true,
       "date": "2023-11-23",
       "type": "DEBIT"
