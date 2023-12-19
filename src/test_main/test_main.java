@@ -28,14 +28,10 @@ import java.nio.file.Paths;
 
 public class test_main {
 	
-	//Part 1.1
-    private static Client newClient(String f_name, String name) {
-        return new Client(f_name, name);
-    }
-    
+	//Part 1.1 
     private static void insClients(Client[] clients) {
         for (int i = 0; i < clients.length; i++) {
-            clients[i] = newClient("name" + (i + 1), "firstname" + (i + 1));
+            clients[i] = new Client("name" + (i + 1), "firstname" + (i + 1));
         }
     }
 

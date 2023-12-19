@@ -15,6 +15,7 @@ public class Client {
 
 	public Client() {
     }
+	
 	public Client(String f_name, String name) {
 
 		this.f_name = f_name;
